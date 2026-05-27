@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarjeta de Presentación – Alfonso Santillán</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <!-- html2canvas: captura la tarjeta como imagen -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jsPDF: convierte la imagen a PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    /* ============================================================
+       CSS VARIABLES – cambia aquí los colores de tu marca
+    ============================================================ */
+    :root {
+      --gold:        #F5C518;
+      --gold-dark:   #c9a000;
+      --gold-light:  #ffe066;
+      --bg-dark:     #1a1a1a;
+      --bg-card:     #222222;
+      --bg-section:  #2a2a2a;
+      --text-light:  #f0f0f0;
+      --text-muted:  #aaaaaa;
+      --radius:      14px;
+      --card-width:  420px;       /* ancho máx. de la tarjeta */
+      --shadow:      0 8px 40px rgba(0,0,0,.6);
+    }
+
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-dark);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 30px 16px 60px;
+      font-family: 'Lato', sans-serif;
+      color: var(--text-light);
+    }
+
+    /* ============================================================
+       TARJETA PRINCIPAL
+    ============================================================ */
+    .card {
+      width: 100%;
+      max-width: var(--card-width);
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      animation: fadeUp .6s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── HEADER / BANNER ── */
+    .card-header {
+      position: relative;
+      background: #111;
+      padding: 32px 20px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+    }
+
+    /* Logo */
+    .logo {
+      width: 85%;
+      max-width: 340px;
+      height: auto;
+      margin-bottom: 16px;
+    }
+
+
+
+    .name {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 5vw, 1.75rem);
+      font-weight: 900;
+      color: var(--gold);
+      text-align: center;
+      letter-spacing: .5px;
+    }
+    .job-title {
+      font-size: .85rem;
+      font-weight: 300;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ── CONTACT ICONS ── */
+    .contact-row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      padding: 22px 20px;
+      background: var(--bg-section);
+    }
+    .contact-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: transform .2s, background .2s;
+      box-shadow: 0 4px 14px rgba(245,197,24,.35);
+    }
+    .contact-btn:hover { transform: scale(1.12); background: var(--gold-light); }
+    .contact-btn svg { width: 22px; height: 22px; fill: #111; }
+
+    /* ── ACTION BUTTONS ── */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 20px 20px 14px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 8px;
+      background: var(--gold);
+      color: #111;
+      font-family: 'Lato', sans-serif;
+      font-size: .92rem;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-align: center;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+    .btn:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: rgba(255,255,255,.08);
+      margin: 4px 20px;
+    }
+
+    /* ── VIDEO ── */
+    .section {
+      padding: 18px 20px;
+    }
+    .section-title {
+      font-size: .7rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%; /* 16:9 */
+      height: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      background: #111;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 10px;
+    }
+
+    /* ── QR CODE ── */
+    .qr-section {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    #qrcode canvas, #qrcode img {
+      border-radius: 8px;
+      background: #fff;
+      padding: 6px;
+    }
+    .qr-label {
+      font-size: .78rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* ── SOCIAL ── */
+    .social-section {
+      padding: 22px 20px 28px;
+      background: var(--bg-section);
+      text-align: center;
+    }
+    .social-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      transition: transform .2s, background .2s;
+      box-shadow: 0 4px 14px rgba(245,197,24,.3);
+    }
+    .social-btn:hover { transform: scale(1.13); background: var(--gold-light); }
+    .social-btn svg { width: 22px; height: 22px; fill: #111; }
+
+    /* ── FOOTER CTA ── */
+    .footer-cta {
+      padding: 22px 24px 28px;
+      text-align: center;
+    }
+    .footer-cta p {
+      font-size: .85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+    .footer-cta a.btn-wa {
+      display: inline-block;
+      padding: 11px 28px;
+      border-radius: 8px;
+      background: #25D366;
+      color: #fff;
+      font-weight: 700;
+      font-size: .88rem;
+      text-decoration: none;
+      transition: background .2s, transform .15s;
+    }
+    .footer-cta a.btn-wa:hover { background: #1ebe5b; transform: translateY(-2px); }
+
+    /* ============================================================
+       RESPONSIVE TWEAKS
+    ============================================================ */
+    @media (min-width: 500px) {
+      body { padding: 40px 20px 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+
+  <!-- ═══ HEADER ═══ -->
+  <div class="card-header">
+    <!--
+      LOGO: reemplaza src con la ruta a tu logo.
+      Si no tienes logo, borra esta etiqueta <img class="logo">.
+    -->
+    <img class="logo" src="https://i.ibb.co/N6bqFP1s/Encabezado.png" alt="CriArt Music Logo" />
+
+    <!--  NOMBRE Y TÍTULO  -->
+    <h1 class="name">Alfonso Santillán Ballesteros</h1>
+    <p class="job-title">Intérprete (Cantante)</p>
+  </div>
+
+  <!-- ═══ ÍCONOS DE CONTACTO ═══ -->
+  <div class="contact-row">
+
+    <!-- TELÉFONO: cambia el número -->
+    <a class="contact-btn" href="tel:+523320527425" title="Llamar">
+      <svg viewBox="0 0 24 24"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24 11.47 11.47 0 0 0 3.58.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1 11.47 11.47 0 0 0 .57 3.58 1 1 0 0 1-.24 1.01z"/></svg>
+    </a>
+
+    <!-- WHATSAPP: cambia el número -->
+    <a class="contact-btn" href="https://api.whatsapp.com/send?phone=3320527425" target="_blank" title="WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.558 4.14 1.532 5.88L0 24l6.272-1.506A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.893 0-3.668-.523-5.188-1.43l-.37-.22-3.724.895.942-3.618-.242-.374A9.94 9.94 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+    </a>
+
+    <!-- EMAIL: cambia el correo -->
+    <a class="contact-btn" href="mailto:correo@ejemplo.com" title="Email">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5z"/></svg>
+    </a>
+
+    <!-- SITIO WEB: cambia la URL -->
+    <a class="contact-btn" href="https://alfonsosantillan.vercel.app" target="_blank" title="Sitio web">
+      <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm-1 17.93V18a1 1 0 0 0-1-1H8l-3.46-3.46A8.01 8.01 0 0 1 4.07 13H5a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1V8a1 1 0 0 1 1-1h.93A8.02 8.02 0 0 1 11 4.07V5a1 1 0 0 0 1 1 1 1 0 0 1 0 2h-1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h5.93A8.01 8.01 0 0 1 11 19.93z"/></svg>
+    </a>
+
+  </div>
+
+  <!-- ═══ BOTONES DE ACCIÓN ═══ -->
+  <div class="actions">
+    <!-- vCard: se genera con JS abajo -->
+    <button class="btn" onclick="descargarVCard()">💾 Guardar contacto</button>
+
+    <!-- Descarga la tarjeta como PDF -->
+    <button class="btn" onclick="descargarPDF()">⬇ Descargar tarjeta (PDF)</button>
+
+    <!-- Descarga la tarjeta como PNG -->
+    <button class="btn" onclick="descargarPNG()">⬇ Descargar tarjeta (.png)</button>
+
+    <!-- Compartir vía Web Share API -->
+    <button class="btn" onclick="compartir()">↗ Compartir</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ VIDEO ═══ -->
+  <div class="section">
+    <p class="section-title">🎵 Video</p>
+    <div class="video-wrapper">
+      <!--
+        Reemplaza el src del iframe con tu video de YouTube.
+        Formato: https://www.youtube.com/embed/VIDEOID
+      -->
+      <iframe
+        src="https://www.youtube.com/embed/IPDgqgbcowg?start=3"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        title="Video de presentación">
+      </iframe>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ CÓDIGO QR ═══ -->
+  <div class="qr-section">
+    <p class="section-title" style="text-align:center">Escanea mi QR</p>
+    <div id="qrcode"></div>
+    <!--
+      La URL del QR se genera en el JS abajo.
+      Cambia QR_URL por la URL que quieras codificar.
+    -->
+    <p class="qr-label">alfonsosantillan.vercel.app</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- ═══ REDES SOCIALES ═══ -->
+  <div class="social-section">
+    <p class="social-title">Sígueme en redes sociales</p>
+    <div class="social-row">
+
+      <!-- FACEBOOK: cambia la URL -->
+      <a class="social-btn" href="https://www.facebook.com/crartmusic" target="_blank" title="Facebook">
+        <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+      </a>
+
+      <!-- INSTAGRAM: cambia la URL -->
+      <a class="social-btn" href="https://instagram.com/tuperfil" target="_blank" title="Instagram">
+        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="#f5c518" style="fill:var(--bg-card)"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#111" stroke-width="2"/></svg>
+      </a>
+
+      <!-- TIKTOK: cambia la URL -->
+      <a class="social-btn" href="https://tiktok.com/@tuperfil" target="_blank" title="TikTok">
+        <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.88a8.22 8.22 0 0 0 4.83 1.55V7a4.85 4.85 0 0 1-1.07-.31z"/></svg>
+      </a>
+
+      <!-- YOUTUBE: cambia la URL -->
+      <a class="social-btn" href="https://youtube.com/@tucanal" target="_blank" title="YouTube">
+        <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" style="fill:var(--gold)"/></svg>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- ═══ FOOTER CTA ═══ -->
+  <div class="footer-cta">
+    <p>¿Te gustó esta Tarjeta de Presentación digital?<br>Contáctame para obtener una propia.</p>
+    <!--
+      WHATSAPP CTA: cambia el número de teléfono en el href
+    -->
+    <a class="btn-wa" href="https://api.whatsapp.com/send?phone=3320527425" target="_blank">
+      💬 Contáctame por WhatsApp
+    </a>
+  </div>
+
+</div><!-- /card -->
+
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  /* ── 1. DATOS DE LA VCARD ───────────────────────────────────
+     Edita aquí TODOS los datos del contacto.
+     Los campos opcionales pueden quedar vacíos ("").
+  ─────────────────────────────────────────────────────────── */
+  const vCardData = {
+    nombre:       "Alfonso",
+    apellidos:    "Santillán Ballesteros",
+    empresa:      "CriArt Music",
+    titulo:       "Intérprete (Cantante)",
+    telefono:     "+523320527425",
+    whatsapp:     "+523320527425",
+    email:        "correo@ejemplo.com",
+    sitioWeb:     "https://alfonsosantillan.vercel.app",
+    facebook:     "https://www.facebook.com/crartmusic",
+    instagram:    "https://instagram.com/tuperfil",
+    tiktok:       "https://tiktok.com/@tuperfil",
+    youtube:      "https://youtube.com/@tucanal",
+    nota:         "Intérprete (Cantante) – CriArt Music"
+  };
+
+  const QR_URL = "https://alfonsosantillan.vercel.app";
+
+
+  /* ══════════════════════════════════════════════════════════
+     NO EDITES DEBAJO DE ESTA LÍNEA (a menos que sepas JS)
+  ══════════════════════════════════════════════════════════ */
+
+  /* Generar QR */
+  window.addEventListener('DOMContentLoaded', () => {
+    new QRCode(document.getElementById("qrcode"), {
+      text: QR_URL,
+      width: 160,
+      height: 160,
+      colorDark: "#111111",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  });
+
+  /* Descargar vCard */
+  function descargarVCard() {
+    const v = vCardData;
+    const vcf = [
+      "BEGIN:VCARD",
+      "VERSION:3.0",
+      `N:${v.apellidos};${v.nombre};;;`,
+      `FN:${v.nombre} ${v.apellidos}`,
+      v.empresa  ? `ORG:${v.empresa}`          : "",
+      v.titulo   ? `TITLE:${v.titulo}`          : "",
+      v.telefono ? `TEL;TYPE=CELL:${v.telefono}`: "",
+      v.email    ? `EMAIL:${v.email}`           : "",
+      v.sitioWeb ? `URL:${v.sitioWeb}`          : "",
+      v.nota     ? `NOTE:${v.nota}`             : "",
+      "END:VCARD"
+    ].filter(Boolean).join("\r\n");
+
+    const blob = new Blob([vcf], { type: "text/vcard;charset=utf-8" });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement("a");
+    a.href     = url;
+    a.download = `${v.nombre}_${v.apellidos}.vcf`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ── Helper: captura la tarjeta como canvas ── */
+  async function capturarTarjeta() {
+    const card = document.querySelector('.card');
+    return await html2canvas(card, {
+      scale: 2,              // alta resolución
+      useCORS: true,         // permite imágenes externas (logo, avatar)
+      backgroundColor: null, // respeta el fondo de la tarjeta
+      logging: false
+    });
+  }
+
+  /* ── Descargar como PDF ── */
+  async function descargarPDF() {
+    const btn = event.currentTarget;
+    btn.textContent = '⏳ Generando PDF…';
+    btn.disabled = true;
+    try {
+      const canvas = await capturarTarjeta();
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const { jsPDF } = window.jspdf;
+      // Dimensiones en mm proporcionales al canvas
+      const pxToMm = 0.264583;
+      const w = canvas.width  * pxToMm / 2;   // /2 por el scale:2
+      const h = canvas.height * pxToMm / 2;
+      const pdf = new jsPDF({ orientation: h > w ? 'p' : 'l', unit: 'mm', format: [w, h] });
+      pdf.addImage(imgData, 'JPEG', 0, 0, w, h);
+      pdf.save('Alfonso_Santillan_Tarjeta.pdf');
+    } catch (e) {
+      alert('No se pudo generar el PDF. Intenta de nuevo.');
+      console.error(e);
+    } finally {
+      btn.textContent = '⬇ Descargar tarjeta (PDF)';
+      btn.disabled = false;
+    }
+  }
+
+  /* ── Descargar como PNG ── */
+  async function descargarPNG() {
+    const btn = event.currentTarget;
+    btn.textContent = '⏳ Generando imagen…';
+    btn.disabled = true;
+    try {
+      const canvas = await capturarTarjeta();
+      const link = document.createElement('a');
+      link.download = 'Alfonso_Santillan_Tarjeta.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (e) {
+      alert('No se pudo generar la imagen. Intenta de nuevo.');
+      console.error(e);
+    } finally {
+      btn.textContent = '⬇ Descargar tarjeta (.png)';
+      btn.disabled = false;
+    }
+  }
+
+  /* Web Share */
+  async function compartir() {
+    const shareData = {
+      title: `${vCardData.nombre} ${vCardData.apellidos}`,
+      text:  `${vCardData.titulo} – ${vCardData.empresa}`,
+      url:   QR_URL
+    };
+    if (navigator.share) {
+      try { await navigator.share(shareData); }
+      catch (e) { console.warn("Share cancelado:", e); }
+    } else {
+      await navigator.clipboard.writeText(QR_URL);
+      alert("Enlace copiado al portapapeles: " + QR_URL);
+    }
+  }
+</script>
+
+</body>
+</html>
