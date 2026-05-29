@@ -192,6 +192,54 @@
       border-radius: 10px;
     }
 
+    /* ── YOUTUBE THUMBNAIL ── */
+    .yt-thumb-link {
+      display: block;
+      text-decoration: none;
+    }
+    .yt-thumb-wrapper {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #111;
+      cursor: pointer;
+    }
+    .yt-thumb-img {
+      width: 100%;
+      display: block;
+      border-radius: 10px;
+      transition: filter .2s;
+    }
+    .yt-thumb-link:hover .yt-thumb-img {
+      filter: brightness(.75);
+    }
+    .yt-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,.5));
+      transition: transform .2s;
+    }
+    .yt-thumb-link:hover .yt-play-btn {
+      transform: translate(-50%, -60%) scale(1.12);
+    }
+    .yt-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,.65);
+      color: #fff;
+      font-size: .8rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 7px 0;
+      letter-spacing: 1px;
+      border-radius: 0 0 10px 10px;
+    }
+
     /* ── QR CODE ── */
     .qr-section {
       padding: 18px 20px;
@@ -339,18 +387,22 @@
   <!-- ═══ VIDEO ═══ -->
   <div class="section">
     <p class="section-title">🎵 Video</p>
-    <div class="video-wrapper">
-      <!--
-        Reemplaza el src del iframe con tu video de YouTube.
-        Formato: https://www.youtube.com/embed/VIDEOID
-      -->
-      <iframe
-        src="https://youtu.be/Yqb4mYOx908?si=ghlixt1KDtw-AHUM"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen
-        title="Video de presentación">
-      </iframe>
-    </div>
+    <a href="https://www.youtube.com/watch?v=Yqb4mYOx908" target="_blank" class="yt-thumb-link" title="Ver en YouTube">
+      <div class="yt-thumb-wrapper">
+        <img
+          src="https://img.youtube.com/vi/Yqb4mYOx908/hqdefault.jpg"
+          alt="Miniatura del video"
+          class="yt-thumb-img"
+        />
+        <div class="yt-play-btn">
+          <svg viewBox="0 0 68 48" width="68" height="48">
+            <rect width="68" height="48" rx="10" fill="#FF0000" opacity="0.9"/>
+            <polygon points="27,14 27,34 47,24" fill="#fff"/>
+          </svg>
+        </div>
+        <div class="yt-label">▶ Ver en YouTube</div>
+      </div>
+    </a>
   </div>
 
   <div class="divider"></div>
