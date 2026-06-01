@@ -17,9 +17,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    /* ============================================================
-       CSS VARIABLES – cambia aquí los colores de tu marca
-    ============================================================ */
+
     :root {
       --gold:        #F5C518;
       --gold-dark:   #c9a000;
@@ -34,9 +32,7 @@
       --shadow:      0 8px 40px rgba(0,0,0,.6);
     }
 
-    /* ============================================================
-       RESET & BASE
-    ============================================================ */
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
@@ -50,9 +46,7 @@
       color: var(--text-light);
     }
 
-    /* ============================================================
-       TARJETA PRINCIPAL
-    ============================================================ */
+
     .card {
       width: 100%;
       max-width: var(--card-width);
@@ -292,6 +286,7 @@
     }
     .social-btn:hover { transform: scale(1.13); background: var(--gold-light); }
     .social-btn svg { width: 22px; height: 22px; fill: #111; }
+    .social-btn svg.ig-icon { fill: none; stroke: #111; }
 
     /* ── FOOTER CTA ── */
     .footer-cta {
@@ -317,9 +312,7 @@
     }
     .footer-cta a.btn-wa:hover { background: #1ebe5b; transform: translateY(-2px); }
 
-    /* ============================================================
-       RESPONSIVE TWEAKS
-    ============================================================ */
+
     @media (min-width: 500px) {
       body { padding: 40px 20px 80px; }
     }
@@ -432,7 +425,11 @@
 
       <!-- INSTAGRAM: cambia la URL -->
       <a class="social-btn" href="https://instagram.com/tuperfil" target="_blank" title="Instagram">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" fill="#f5c518" style="fill:var(--bg-card)"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="#111" stroke-width="2"/></svg>
+        <svg class="ig-icon" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="4"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="#111" stroke="none"/>
+        </svg>
       </a>
 
       <!-- TIKTOK: cambia la URL -->
@@ -467,8 +464,6 @@
 ============================================================ -->
 <script>
   /* ── 1. DATOS DE LA VCARD ───────────────────────────────────
-     Edita aquí TODOS los datos del contacto.
-     Los campos opcionales pueden quedar vacíos ("").
   ─────────────────────────────────────────────────────────── */
   const vCardData = {
     nombre:       "Alfonso",
@@ -487,11 +482,6 @@
   };
 
   const QR_URL = "https://alfonsosantillan.vercel.app";
-
-
-  /* ══════════════════════════════════════════════════════════
-     NO EDITES DEBAJO DE ESTA LÍNEA (a menos que sepas JS)
-  ══════════════════════════════════════════════════════════ */
 
   /* Generar QR */
   window.addEventListener('DOMContentLoaded', () => {
@@ -531,7 +521,7 @@
     URL.revokeObjectURL(url);
   }
 
-  /* ── Helper: captura la tarjeta como canvas ── */
+  
   async function capturarTarjeta() {
     const card = document.querySelector('.card');
     return await html2canvas(card, {
@@ -542,7 +532,7 @@
     });
   }
 
-  /* ── Descargar como PDF ── */
+  
   async function descargarPDF() {
     const btn = event.currentTarget;
     btn.textContent = '⏳ Generando PDF…';
@@ -567,7 +557,7 @@
     }
   }
 
-  /* ── Descargar como PNG ── */
+  
   async function descargarPNG() {
     const btn = event.currentTarget;
     btn.textContent = '⏳ Generando imagen…';
